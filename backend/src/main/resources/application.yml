@@ -1,0 +1,66 @@
+server:
+  port: ${PORT:8080}
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: trustloop-backend
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/trustloop}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 20000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+# TrustLoop Application Specific Configurations
+trustloop:
+  app:
+    name: "TrustLoop API"
+    version: "1.0.0"
+    description: "Evidence-Gap Guided Service Recovery Engine & Local Marketplace"
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000}
+  jwt:
+    secret: ${JWT_SECRET:404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000} # 24 hours
+  google:
+    client-id: ${GOOGLE_CLIENT_ID:328652220146-me5chkad2saioda4qmehoi9fesmqr9io.apps.googleusercontent.com}
+
+# Springdoc OpenAPI Swagger documentation
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+
+logging:
+  level:
+    root: INFO
+    com.trustloop: DEBUG
+    org.springframework.security: INFO
+    org.flywaydb: INFO
