@@ -4,15 +4,12 @@ import {
   ShieldCheck,
   User,
   Wrench,
-  ShieldAlert,
-  Mail,
-  Lock,
-  Phone,
+  Shield,
+  Eye,
+  EyeOff,
   AlertCircle,
   Check,
 } from 'lucide-react';
-import Button from '../components/ui/Button';
-import Card from '../components/ui/Card';
 import { useAuth } from '../context/AuthContext';
 
 export default function RegisterPage() {
@@ -20,33 +17,33 @@ export default function RegisterPage() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [phone, setPhone] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
   const { register, isLoading } = useAuth();
   const navigate = useNavigate();
 
-  const roleCards = [
+  const roleOptions = [
     {
       role: 'CUSTOMER',
       title: 'Customer',
-      description: 'Book local service specialists, approve quotations & track verifiable claims.',
+      line1: 'Book services',
+      line2: '& raise disputes',
       icon: User,
-      badge: 'Popular',
     },
     {
       role: 'PROVIDER',
       title: 'Provider',
-      description: 'Offer trade services, submit quotes & attach proof of completed work.',
+      line1: 'Offer your skills',
+      line2: '& get jobs',
       icon: Wrench,
-      badge: 'Trade Pro',
     },
     {
       role: 'ADMIN',
       title: 'Admin',
-      description: 'Manage platform compliance, view recovery audit logs & system health.',
-      icon: ShieldAlert,
-      badge: 'Governance',
+      line1: 'Manage platform',
+      line2: '& resolve cases',
+      icon: Shield,
     },
   ];
 
@@ -69,7 +66,6 @@ export default function RegisterPage() {
       email: email.trim(),
       password,
       role: selectedRole,
-      phone: phone.trim() || null,
     };
 
     const result = await register(payload);
@@ -81,26 +77,31 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      {/* Brand Header */}
-      <div className="sm:mx-auto sm:w-full sm:max-w-2xl text-center px-4">
-        <Link to="/" className="inline-flex items-center space-x-3 mb-2">
-          <div className="h-11 w-11 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-sm shadow-blue-500/30">
-            <ShieldCheck className="w-6 h-6" />
-          </div>
-          <span className="font-extrabold text-2xl tracking-tight text-slate-900">TrustLoop</span>
-        </Link>
-        <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-900">
-          Create your TrustLoop account
-        </h2>
-        <p className="mt-1 text-xs text-slate-500">
-          Select your primary platform role to get started with verifiable claims
-        </p>
-      </div>
+    <div className="min-h-screen bg-[#f8fafc] flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
+      <div className="sm:mx-auto sm:w-full sm:max-w-lg px-4">
+        
+        {/* Brand Logo & Header */}
+        <div className="text-center mb-8">
+          <Link to="/" className="inline-flex items-center space-x-2.5 mb-3 group">
+            <div className="h-10 w-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-sm shadow-blue-500/25 group-hover:bg-blue-700 transition">
+              <ShieldCheck className="w-6 h-6 stroke-[2.2]" />
+            </div>
+            <span className="font-extrabold text-2xl tracking-tight text-slate-900">
+              TrustLoop
+            </span>
+          </Link>
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+            Create your account
+          </h2>
+          <p className="mt-1 text-sm text-slate-500">
+            Join TrustLoop and get started
+          </p>
+        </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-2xl px-4 sm:px-0">
-        <Card className="py-8 px-6 sm:px-10 border-slate-200">
+        {/* Card */}
+        <div className="bg-white py-8 px-6 sm:px-10 rounded-2xl border border-slate-200/80 shadow-card">
           
+          {/* Error Message */}
           {errorMessage && (
             <div className="mb-6 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-start space-x-2.5">
               <AlertCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
@@ -108,160 +109,126 @@ export default function RegisterPage() {
             </div>
           )}
 
-          {/* Role Selection Cards */}
-          <div className="mb-8">
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-3">
-              Step 1: Select Platform Role
-            </label>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
-              {roleCards.map((rc) => {
-                const isSelected = selectedRole === rc.role;
-                const Icon = rc.icon;
+          {/* 3 Role Selection Cards */}
+          <div className="mb-6">
+            <div className="grid grid-cols-3 gap-3">
+              {roleOptions.map((opt) => {
+                const isSelected = selectedRole === opt.role;
+                const IconComponent = opt.icon;
                 return (
-                  <div
-                    key={rc.role}
-                    onClick={() => setSelectedRole(rc.role)}
-                    className={`p-4 rounded-xl border-2 transition-all cursor-pointer relative flex flex-col justify-between ${
+                  <button
+                    key={opt.role}
+                    type="button"
+                    onClick={() => setSelectedRole(opt.role)}
+                    className={`py-4 px-2 rounded-xl border-2 transition-all flex flex-col items-center text-center cursor-pointer relative ${
                       isSelected
-                        ? 'border-blue-600 bg-blue-50/40 shadow-sm'
+                        ? 'border-blue-600 bg-blue-50/50 shadow-xs'
                         : 'border-slate-200 bg-white hover:border-slate-300'
                     }`}
                   >
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <div
-                          className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                            isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-600'
-                          }`}
-                        >
-                          <Icon className="w-4 h-4" />
-                        </div>
-                        {isSelected && (
-                          <div className="w-5 h-5 rounded-full bg-blue-600 text-white flex items-center justify-center">
-                            <Check className="w-3 h-3 stroke-[3]" />
-                          </div>
-                        )}
-                      </div>
-                      <h4 className="text-sm font-bold text-slate-900">{rc.title}</h4>
-                      <p className="text-[11px] text-slate-500 mt-1 leading-normal">
-                        {rc.description}
-                      </p>
+                    {/* Role Icon */}
+                    <div
+                      className={`w-9 h-9 rounded-full flex items-center justify-center mb-2.5 transition ${
+                        isSelected
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-blue-50 text-blue-600'
+                      }`}
+                    >
+                      <IconComponent className="w-4.5 h-4.5" />
                     </div>
 
-                    <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between">
-                      <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
-                        Role
-                      </span>
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                          isSelected
-                            ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-600'
-                        }`}
-                      >
-                        {rc.badge}
-                      </span>
-                    </div>
-                  </div>
+                    <h4 className="text-xs font-bold text-slate-900">
+                      {opt.title}
+                    </h4>
+                    <p className="text-[10px] text-slate-500 mt-1 leading-tight whitespace-pre-line">
+                      {opt.line1}
+                      <br />
+                      {opt.line2}
+                    </p>
+                  </button>
                 );
               })}
             </div>
           </div>
 
-          {/* Form Fields */}
-          <form onSubmit={handleSubmit} className="space-y-4 border-t border-slate-100 pt-6">
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">
-              Step 2: Account Details
-            </label>
-
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            
+            {/* Full Name */}
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Full Name
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                Full name
               </label>
-              <div className="relative">
-                <User className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                <input
-                  type="text"
-                  required
-                  placeholder="e.g. Alex Morgan"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
-                />
-              </div>
+              <input
+                type="text"
+                required
+                placeholder="Enter your full name"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+              />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="email"
-                    required
-                    placeholder="name@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Phone (Optional)
-                </label>
-                <div className="relative">
-                  <Phone className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="tel"
-                    placeholder="+1 (555) 000-0000"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
-                  />
-                </div>
-              </div>
+            {/* Email Address */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                Email address
+              </label>
+              <input
+                type="email"
+                required
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+              />
             </div>
 
+            {/* Password */}
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Password (min 6 characters)
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                Password
               </label>
               <div className="relative">
-                <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   required
-                  placeholder="••••••••"
+                  placeholder="Create a strong password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+                  className="w-full pl-3.5 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
             </div>
 
-            <Button
+            {/* Submit Button */}
+            <button
               type="submit"
-              variant="primary"
-              size="lg"
-              isLoading={isLoading}
-              className="w-full font-semibold mt-4"
+              disabled={isLoading}
+              className="w-full mt-2 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl shadow-sm shadow-blue-500/30 transition duration-150 disabled:opacity-60"
             >
-              Complete Registration as {selectedRole}
-            </Button>
+              {isLoading ? 'Creating account...' : 'Create Account'}
+            </button>
           </form>
 
-          {/* Switch to Login */}
-          <div className="mt-6 text-center text-xs text-slate-500">
+          {/* Switch to Sign In */}
+          <div className="mt-5 text-center text-xs text-slate-500">
             <span>Already have an account? </span>
             <Link to="/login" className="font-semibold text-blue-600 hover:text-blue-700">
               Sign in
             </Link>
           </div>
-        </Card>
+
+        </div>
+
       </div>
     </div>
   );
